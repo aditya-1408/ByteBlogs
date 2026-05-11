@@ -114,7 +114,7 @@ export class Service{
                 conf.appwriteBucketId,
                 fileId
             )
-            return true;
+            
             return true;
         } catch(error){
             console.log("Appwrite service::deleteFile:: error",error);
