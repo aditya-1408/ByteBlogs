@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const Footer = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <footer className="w-full py-6 text-center text-sm">Footer</footer>;
+};
 
-export default Footer
+export default Footer;

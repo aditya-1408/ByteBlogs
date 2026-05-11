@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
 const Header = () => {
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <header className="w-full py-6 text-center text-xl font-semibold">
+      Header
+    </header>
+  );
+};
 
-export default Header
+export default Header;
