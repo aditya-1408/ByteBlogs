@@ -6,11 +6,14 @@ function Home() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    appwriteService.getPosts().then((posts) => {
-      if (posts) {
-        setPosts(posts.documents);
-      }
-    });
+    appwriteService
+      .getPosts()
+      .then((posts) => {
+        if (posts) {
+          setPosts(posts.documents);
+        }
+      })
+      .catch((err) => console.log("Home::getPosts error", err));
   }, []);
 
   if (posts.length === 0) {

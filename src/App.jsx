@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Outlet } from "react-router-dom";
 import "./App.css";
 import authService from "./appwrite/auth.js";
 
@@ -26,7 +27,9 @@ function App() {
     <div className="min-h-screen flex flex-col bg-gray-400">
       <div className="w-full flex-1">
         <Header />
-        <main className="w-full flex-1" />
+        <main className="w-full flex-1">
+          <Outlet />
+        </main>
         <Footer />
       </div>
     </div>

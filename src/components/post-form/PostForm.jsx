@@ -1,6 +1,9 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Input, RTE, Select } from "..";
+import Button from "../Button";
+import Input from "../Input";
+import RTE from "../RTE";
+import Select from "../Select";
 import appwriteService from "../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -18,40 +21,48 @@ export default function PostForm({ post }) {
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
+  const [error, setError] = useState("");
 
   const submit = async (data) => {
-    if (post) {
-      const file = data.image[0]
-        ? await appwriteService.uploadFile(data.image[0])
-        : null;
-
-      if (file) {
-        appwriteService.deleteFile(post.featuredImage);
+    setError("");
+    try {
+      if (!userData?.$id) {
+        throw new Error("User not found in session. Please login again.");
       }
 
-      const dbPost = await appwriteService.updatePost(post.$id, {
-        ...data,
-        featuredImage: file ? file.$id : undefined,
-      });
+      if (post) {
+        const existingFileId = post.featuredimage || post.featuredImage;
+        const file = data.image?.[0]
+          ? await appwriteService.uploadFile(data.image[0])
+          : null;
 
-      if (dbPost) {
-        navigate(`/post/${dbPost.$id}`);
-      }
-    } else {
-      const file = await appwriteService.uploadFile(data.image[0]);
+        if (file && existingFileId) {
+          await appwriteService.deleteFile(existingFileId);
+        }
 
-      if (file) {
-        const fileId = file.$id;
-        data.featuredImage = fileId;
-        const dbPost = await appwriteService.createPost({
+        const dbPost = await appwriteService.updatePost(post.$id, {
           ...data,
-          userId: userData.$id,
+          featuredimage: file ? file.$id : existingFileId,
         });
 
-        if (dbPost) {
-          navigate(`/post/${dbPost.$id}`);
+        navigate(`/post/${dbPost.$id}`);
+      } else {
+        const file = await appwriteService.uploadFile(data.image?.[0]);
+        if (!file?.$id) {
+          throw new Error("Featured image upload failed.");
         }
+
+        const dbPost = await appwriteService.createPost({
+          ...data,
+          featuredimage: file.$id,
+          userid: userData.$id,
+        });
+
+        navigate(`/post/${dbPost.$id}`);
       }
+    } catch (err) {
+      setError(err?.message || "Something went wrong.");
+      console.log("PostForm::submit error", err);
     }
   };
 
@@ -104,6 +115,9 @@ export default function PostForm({ post }) {
         />
       </div>
       <div className="w-1/3 px-2">
+        {error ? (
+          <p className="text-red-600 mb-4 text-sm text-center">{error}</p>
+        ) : null}
         <Input
           label="Featured Image :"
           type="file"
@@ -111,15 +125,24 @@ export default function PostForm({ post }) {
           accept="image/png, image/jpg, image/jpeg, image/gif"
           {...register("image", { required: !post })}
         />
-        {post && (
+        {post && (post.featuredimage || post.featuredImage) ? (
           <div className="w-full mb-4">
             <img
-              src={appwriteService.getFilePreview(post.featuredImage)}
+              src={appwriteService.getFilePreview(
+                post.featuredimage || post.featuredImage,
+              )}
               alt={post.title}
               className="rounded-lg"
+              onError={(e) => {
+                const fileId = post.featuredimage || post.featuredImage;
+                const viewSrc = appwriteService.getFileView(fileId);
+                if (viewSrc && e.currentTarget.src !== viewSrc) {
+                  e.currentTarget.src = viewSrc;
+                }
+              }}
             />
           </div>
-        )}
+        ) : null}
         <Select
           options={["active", "inactive"]}
           label="Status"
