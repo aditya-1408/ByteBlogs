@@ -50,6 +50,13 @@ export class AuthService {
   async login({ email, password }) {
     return this.account.createEmailPasswordSession(email, password);
   }
+  async createPasswordRecovery(email) {
+    const recoveryUrl = `${window.location.origin}/reset-password`;
+    return this.account.createRecovery(email, recoveryUrl);
+  }
+  async updatePasswordRecovery({ userId, secret, password }) {
+    return this.account.updateRecovery(userId, secret, password);
+  }
   async getCurrentUser() {
     // If there's no session cookie (or Appwrite's localStorage fallback), avoid calling /account.
     // This prevents the expected 401 from appearing as an error in the browser console.

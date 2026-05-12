@@ -78,6 +78,14 @@ function Login() {
                 required: true,
               })}
             />
+            <div className="flex justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-sm font-bold text-teal-700 transition-all duration-200 hover:text-teal-900 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <Button type="submit" className="w-full">
               Sign in
             </Button>
