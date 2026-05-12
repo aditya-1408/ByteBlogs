@@ -1,4 +1,3 @@
-import React from "react";
 import Container from "../container/Container";
 import Logo from "../Logo";
 import LogoutBtn from "./LogoutBtn";
@@ -39,21 +38,34 @@ function Header() {
   ];
 
   return (
-    <header className="py-3 shadow bg-gray-500">
+    <header className="sticky top-0 z-50 border-b border-white/60 bg-white/75 py-3 shadow-sm shadow-slate-900/5 backdrop-blur-xl">
       <Container>
-        <nav className="flex">
-          <div className="mr-4">
-            <Link to="/">
-              <Logo width="70px" />
+        <nav className="flex flex-wrap items-center gap-4">
+          <div className="mr-2">
+            <Link
+              to="/"
+              className="group flex items-center gap-3 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-600"
+            >
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-slate-950 p-2 shadow-lg shadow-slate-900/15 transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105">
+                <Logo width="32px" className="drop-shadow-sm" />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-base font-black tracking-wide text-slate-950">
+                  MegaBlog
+                </span>
+                <span className="text-xs font-semibold uppercase text-teal-700">
+                  Stories hub
+                </span>
+              </span>
             </Link>
           </div>
-          <ul className="flex ml-auto">
+          <ul className="ml-auto flex flex-wrap items-center justify-end gap-2">
             {navItems.map((item) =>
               item.active ? (
                 <li key={item.name}>
                   <button
                     onClick={() => navigate(item.slug)}
-                    className="inline-bock px-6 py-2 duration-200 hover:bg-blue-100 rounded-full"
+                    className="inline-flex items-center rounded-full px-4 py-2 text-sm font-bold text-slate-700 transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-950 hover:text-white hover:shadow-lg hover:shadow-slate-900/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
                   >
                     {item.name}
                   </button>

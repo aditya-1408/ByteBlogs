@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../Button";
 import Input from "../Input";
@@ -77,7 +77,7 @@ export default function PostForm({ post }) {
     return "";
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "title") {
         setValue("slug", slugTransform(value.title), { shouldValidate: true });
@@ -88,8 +88,11 @@ export default function PostForm({ post }) {
   }, [watch, slugTransform, setValue]);
 
   return (
-    <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-      <div className="w-2/3 px-2">
+    <form
+      onSubmit={handleSubmit(submit)}
+      className="grid animate-fade-up gap-6 rounded-[2rem] border border-white/70 bg-white/85 p-5 shadow-2xl shadow-slate-900/10 backdrop-blur lg:grid-cols-[minmax(0,1fr)_360px] sm:p-8"
+    >
+      <div className="min-w-0">
         <Input
           label="Title :"
           placeholder="Title"
@@ -114,9 +117,11 @@ export default function PostForm({ post }) {
           defaultValue={getValues("content")}
         />
       </div>
-      <div className="w-1/3 px-2">
+      <aside className="rounded-3xl border border-slate-200/70 bg-slate-50/80 p-5 shadow-inner shadow-white">
         {error ? (
-          <p className="text-red-600 mb-4 text-sm text-center">{error}</p>
+          <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-center text-sm font-bold text-rose-700">
+            {error}
+          </p>
         ) : null}
         <Input
           label="Featured Image :"
@@ -126,13 +131,13 @@ export default function PostForm({ post }) {
           {...register("image", { required: !post })}
         />
         {post && (post.featuredimage || post.featuredImage) ? (
-          <div className="w-full mb-4">
+          <div className="mb-4 w-full overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-900/10">
             <img
               src={appwriteService.getFilePreview(
                 post.featuredimage || post.featuredImage,
               )}
               alt={post.title}
-              className="rounded-lg"
+              className="w-full object-cover"
               onError={(e) => {
                 const fileId = post.featuredimage || post.featuredImage;
                 const viewSrc = appwriteService.getFileView(fileId);
@@ -151,12 +156,12 @@ export default function PostForm({ post }) {
         />
         <Button
           type="submit"
-          bgColor={post ? "bg-green-500" : undefined}
+          bgColor={post ? "bg-teal-600" : undefined}
           className="w-full"
         >
           {post ? "Update" : "Submit"}
         </Button>
-      </div>
+      </aside>
     </form>
   );
 }
